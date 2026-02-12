@@ -1,12 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from datetime import datetime, timezone
 from app.database import get_db
 from app.models import Card, User, UserCardProgress, Deck
-from app.schemas import ProgressResponse, CardWithProgress, CardResponse
+from app.schemas import ReviewCreate, ProgressResponse, CardWithProgress, CardResponse
 from app.config import (
     CONFIDENCE_THRESHOLD_LEARN, 
     CONFIDENCE_THRESHOLD_RECAP,
+    REVIEW_WEIGHT_HISTORY,
+    REVIEW_WEIGHT_NEW
 )
 
 router = APIRouter(tags=["progress"])
@@ -66,3 +69,48 @@ def get_user_cards(
                 ))
     
     return result
+
+@router.post("/reviews", response_model=ProgressResponse, status_code=201)
+def record_review(review: ReviewCreate, db: Session = Depends(get_db)):
+    """Record a learning/review event and update progress"""
+    # Verify user and card exist
+    user = db.query(User).filter(User.id == review.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    card = db.query(Card).filter(Card.id == review.card_id).first()
+    if not card:
+        raise HTTPException(status_code=404, detail="Card not found")
+    
+    # Validate confidence
+    if not 0.0 <= review.confidence <= 1.0:
+        raise HTTPException(status_code=400, detail="Confidence must be between 0.0 and 1.0")
+    
+    # Find or create progress record
+    progress = db.query(UserCardProgress).filter(
+        UserCardProgress.user_id == review.user_id,
+        UserCardProgress.card_id == review.card_id
+    ).first()
+    
+    if progress:
+        # Update existing: weighted average
+        progress.confidence_score = (
+            REVIEW_WEIGHT_HISTORY * progress.confidence_score + 
+            REVIEW_WEIGHT_NEW * review.confidence
+        )
+        progress.review_count += 1
+        progress.last_reviewed_at = datetime.now(timezone.utc)
+    else:
+        # Create new
+        progress = UserCardProgress(
+            user_id=review.user_id,
+            card_id=review.card_id,
+            confidence_score=review.confidence,
+            review_count=1,
+            last_reviewed_at=datetime.now(timezone.utc)
+        )
+        db.add(progress)
+    
+    db.commit()
+    db.refresh(progress)
+    return progress
