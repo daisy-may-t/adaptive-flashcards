@@ -5,12 +5,30 @@
       <div class="container">
         <h1 class="title">Adaptive Flashcards</h1>
         <p class="subtitle">Learn smarter, not harder</p>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+          <button
+            @click="currentView = 'learn'"
+            :class="['nav-tab', { active: currentView === 'learn' }]"
+          >
+            📚 Learn
+          </button>
+          <button
+            @click="currentView = 'admin'"
+            :class="['nav-tab', { active: currentView === 'admin' }]"
+          >
+            ⚙️ Admin
+          </button>
+        </div>
       </div>
     </header>
 
     <!-- Main Content -->
     <main class="main">
       <div class="container">
+        <!-- Learn View -->
+        <div v-if="currentView === 'learn'">
         <!-- Controls -->
         <div class="controls-card">
           <div class="controls-grid">
@@ -88,6 +106,10 @@
             </p>
           </div>
         </div>
+        </div>
+
+        <!-- Admin View -->
+        <AdminPanel v-else @deck-created="loadDecks" />
       </div>
     </main>
   </div>
@@ -99,6 +121,7 @@ import ModeToggle from './components/ModeToggle.vue';
 import ProgressBar from './components/ProgressBar.vue';
 import Flashcard from './components/Flashcard.vue';
 import ConfidenceSlider from './components/ConfidenceSlider.vue';
+import AdminPanel from './components/AdminPanel.vue';
 import api from './services/api.js';
 
 export default {
@@ -109,9 +132,11 @@ export default {
     ProgressBar,
     Flashcard,
     ConfidenceSlider,
+    AdminPanel,
   },
   data() {
     return {
+      currentView: 'learn',
       decks: [],
       selectedDeckId: '',
       mode: 'learn',
@@ -137,6 +162,11 @@ export default {
     mode() {
       this.loadCards();
       this.updatePageTitle();
+    },
+    currentView(newView) {
+      if (newView === 'learn') {
+        this.loadDecks();
+      }
     },
   },
   async mounted() {
@@ -269,6 +299,34 @@ body {
 .subtitle {
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.875rem;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nav-tab {
+  padding: 0.5rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-tab:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.nav-tab.active {
+  background-color: white;
+  color: #4f46e5;
 }
 
 /* Main Content */
