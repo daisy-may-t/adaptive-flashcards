@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 from app.schemas.card import CardResponse
@@ -16,14 +16,11 @@ class ProgressResponse(BaseModel):
     review_count: int
     last_reviewed_at: Optional[datetime]
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CardWithProgress(BaseModel):
     """Card combined with user's progress on it"""
     card: CardResponse
     progress: Optional[ProgressResponse] = None
     
-    class Config:
-        from_attributes = True
-        
+    model_config = ConfigDict(from_attributes=True)

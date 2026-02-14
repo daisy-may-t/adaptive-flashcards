@@ -17,7 +17,7 @@ router = APIRouter(tags=["progress"])
 @router.get("/users/{user_id}/cards", response_model=List[CardWithProgress])
 def get_user_cards(
     user_id: int,
-    mode: str = Query(..., regex="^(learn|recap)$"),
+    mode: str = Query(..., pattern="^(learn|recap)$"),
     deck_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
