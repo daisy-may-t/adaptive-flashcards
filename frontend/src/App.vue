@@ -12,13 +12,13 @@
             @click="currentView = 'learn'"
             :class="['nav-tab', { active: currentView === 'learn' }]"
           >
-            📚 Learn
+            🎓 Study
           </button>
           <button
             @click="currentView = 'admin'"
             :class="['nav-tab', { active: currentView === 'admin' }]"
           >
-            ⚙️ Admin
+            ✏️ Create
           </button>
         </div>
       </div>
@@ -322,7 +322,8 @@ body {
 
 .header .container {
   padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+  padding-bottom: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .title {
@@ -339,29 +340,33 @@ body {
 /* Navigation Tabs */
 .nav-tabs {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 0;
+  margin-top: 1.5rem;
 }
 
 .nav-tab {
-  padding: 0.5rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  padding: 0.75rem 2rem;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.7);
   border: none;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  border-bottom: 3px solid transparent;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
+  margin-bottom: -2px;
 }
 
-.nav-tab:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+.nav-tab:hover:not(.active) {
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .nav-tab.active {
-  background-color: white;
-  color: #4f46e5;
+  color: white;
+  border-bottom-color: white;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Main Content */
@@ -408,7 +413,7 @@ body {
 
 .state-icon,
 .error-icon {
-  font-size: 4rem;
+  font-size: 3rem;
   margin-bottom: 1rem;
 }
 
