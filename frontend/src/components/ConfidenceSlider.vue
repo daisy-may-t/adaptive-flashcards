@@ -4,15 +4,20 @@
       How confident are you? ({{ modelValue }}/10)
     </label>
 
-    <input
-      type="range"
-      v-model.number="localValue"
-      @input="handleInput"
-      min="0"
-      max="10"
-      step="1"
-      class="slider"
-    />
+    <div class="slider-container">
+      <input
+        type="range"
+        v-model.number="localValue"
+        @input="handleInput"
+        min="0"
+        max="10"
+        step="1"
+        class="slider"
+      />
+      <div class="slider-ticks">
+        <span v-for="i in 11" :key="i" class="tick"></span>
+      </div>
+    </div>
 
     <div class="scale-labels">
       <span class="scale-label">0 - Not confident</span>
@@ -86,7 +91,14 @@ export default {
   margin-bottom: 0.75rem;
 }
 
+.slider-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
 .slider {
+  position: relative;
   width: 100%;
   height: 0.75rem;
   border-radius: 0.5rem;
@@ -95,6 +107,28 @@ export default {
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.slider-ticks {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tick {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .slider::-webkit-slider-thumb {
@@ -108,6 +142,8 @@ export default {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s;
+  position: relative;
+  z-index: 20;
 }
 
 .slider::-webkit-slider-thumb:hover {
@@ -123,6 +159,8 @@ export default {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s;
+  position: relative;
+  z-index: 20;
 }
 
 .slider::-moz-range-thumb:hover {
