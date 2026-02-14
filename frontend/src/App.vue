@@ -132,9 +132,11 @@ export default {
   watch: {
     selectedDeckId() {
       this.loadCards();
+      this.updatePageTitle();
     },
     mode() {
       this.loadCards();
+      this.updatePageTitle();
     },
   },
   async mounted() {
@@ -144,6 +146,7 @@ export default {
     async loadDecks() {
       try {
         this.decks = await api.getDecks();
+        this.updatePageTitle();
       } catch (error) {
         console.error('Error loading decks:', error);
         this.error = 'Failed to load decks. Make sure the backend is running.';
@@ -200,6 +203,19 @@ export default {
         this.loadCards();
       } else {
         this.loadDecks();
+      }
+    },
+
+    updatePageTitle() {
+      if (!this.selectedDeckId) {
+        document.title = 'Adaptive Flashcards';
+        return;
+      }
+      
+      const deck = this.decks.find(d => d.id === this.selectedDeckId);
+      if (deck) {
+        const modeText = this.mode === 'learn' ? 'Learn' : 'Recap';
+        document.title = `${deck.title} - ${modeText} | Adaptive Flashcards`;
       }
     },
   },
