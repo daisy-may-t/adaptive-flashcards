@@ -74,7 +74,12 @@
         <div v-else class="card-section">
           <!-- Progress Bar -->
           <div class="progress-card">
-            <ProgressBar :current-index="currentCardIndex" :total="cards.length" />
+            <div class="progress-header">
+              <ProgressBar :current-index="currentCardIndex" :total="cards.length" />
+              <button @click="enterFullscreen" class="fullscreen-button" title="Enter fullscreen mode">
+                ⛶ Fullscreen
+              </button>
+            </div>
           </div>
 
           <!-- Flashcard -->
@@ -112,6 +117,18 @@
         <AdminPanel v-else @deck-created="loadDecks" />
       </div>
     </main>
+
+    <!-- Fullscreen Mode -->
+    <FullscreenFlashcard
+      v-if="currentCard && cards.length > 0"
+      :is-visible="isFullscreen"
+      :question="currentCard.card.question"
+      :answer="currentCard.card.answer"
+      :current-index="currentCardIndex"
+      :total="cards.length"
+      @close="exitFullscreen"
+      @submit="handleFullscreenSubmit"
+    />
   </div>
 </template>
 
@@ -122,6 +139,7 @@ import ProgressBar from './components/ProgressBar.vue';
 import Flashcard from './components/Flashcard.vue';
 import ConfidenceSlider from './components/ConfidenceSlider.vue';
 import AdminPanel from './components/AdminPanel.vue';
+import FullscreenFlashcard from './components/FullscreenFlashcard.vue';
 import api from './services/api.js';
 
 export default {
@@ -133,6 +151,7 @@ export default {
     Flashcard,
     ConfidenceSlider,
     AdminPanel,
+    FullscreenFlashcard,
   },
   data() {
     return {
@@ -147,6 +166,7 @@ export default {
       loading: false,
       submitting: false,
       error: null,
+      isFullscreen: false,
     };
   },
   computed: {
@@ -157,11 +177,9 @@ export default {
   watch: {
     selectedDeckId() {
       this.loadCards();
-      this.updatePageTitle();
     },
     mode() {
       this.loadCards();
-      this.updatePageTitle();
     },
     currentView(newView) {
       if (newView === 'learn') {
@@ -176,7 +194,6 @@ export default {
     async loadDecks() {
       try {
         this.decks = await api.getDecks();
-        this.updatePageTitle();
       } catch (error) {
         console.error('Error loading decks:', error);
         this.error = 'Failed to load decks. Make sure the backend is running.';
@@ -236,16 +253,34 @@ export default {
       }
     },
 
-    updatePageTitle() {
-      if (!this.selectedDeckId) {
-        document.title = 'Adaptive Flashcards';
-        return;
-      }
-      
-      const deck = this.decks.find(d => d.id === this.selectedDeckId);
-      if (deck) {
-        const modeText = this.mode === 'learn' ? 'Learn' : 'Recap';
-        document.title = `${deck.title} - ${modeText} | Adaptive Flashcards`;
+    enterFullscreen() {
+      this.isFullscreen = true;
+    },
+
+    exitFullscreen() {
+      this.isFullscreen = false;
+    },
+
+    async handleFullscreenSubmit(confidenceScore) {
+      this.submitting = true;
+
+      try {
+        await api.submitReview(this.currentCard.card.id, confidenceScore);
+
+        // Move to next card or exit fullscreen if finished
+        if (this.currentCardIndex < this.cards.length - 1) {
+          this.currentCardIndex++;
+        } else {
+          // Finished all cards
+          this.isFullscreen = false;
+          await this.loadCards();
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        this.error = 'Failed to submit review. Please try again.';
+        this.isFullscreen = false;
+      } finally {
+        this.submitting = false;
       }
     },
   },
@@ -428,6 +463,34 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Progress Header */
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.fullscreen-button {
+  padding: 0.5rem 1rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fullscreen-button:hover {
+  background-color: #4338ca;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
 /* Info Card */
