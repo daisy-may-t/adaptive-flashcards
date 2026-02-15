@@ -112,7 +112,7 @@
               {{ deck.description }}
             </p>
             <p class="deck-meta">
-              Deck ID: {{ deck.id }} • Created: {{ formatDate(deck.created_at) }}
+              Created: {{ formatDate(deck.created_at) }}
             </p>
           </div>
         </div>
