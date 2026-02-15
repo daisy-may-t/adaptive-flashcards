@@ -15,8 +15,8 @@
             🎓 Study
           </button>
           <button
-            @click="currentView = 'admin'"
-            :class="['nav-tab', { active: currentView === 'admin' }]"
+            @click="currentView = 'create'"
+            :class="['nav-tab', { active: currentView === 'create' }]"
           >
             ✏️ Create
           </button>
@@ -113,8 +113,8 @@
         </div>
         </div>
 
-        <!-- Admin View -->
-        <AdminPanel v-else @deck-created="loadDecks" />
+        <!-- Create View -->
+        <CreatePanel v-else @deck-created="loadDecks" />
       </div>
     </main>
 
@@ -138,7 +138,7 @@ import ModeToggle from './components/ModeToggle.vue';
 import ProgressBar from './components/ProgressBar.vue';
 import Flashcard from './components/Flashcard.vue';
 import ConfidenceSlider from './components/ConfidenceSlider.vue';
-import AdminPanel from './components/AdminPanel.vue';
+import CreatePanel from './components/CreatePanel.vue';
 import FullscreenFlashcard from './components/FullscreenFlashcard.vue';
 import api from './services/api.js';
 
@@ -150,7 +150,7 @@ export default {
     ProgressBar,
     Flashcard,
     ConfidenceSlider,
-    AdminPanel,
+    CreatePanel,
     FullscreenFlashcard,
   },
   data() {

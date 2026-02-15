@@ -1,6 +1,6 @@
 <template>
-  <div class="admin-panel">
-    <h2 class="section-title">Admin Panel</h2>
+  <div class="create-panel">
+    <h2 class="section-title">Create Panel</h2>
     <p class="section-subtitle">Create and manage flashcard decks</p>
 
     <!-- Success/Error Messages -->
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Create Deck Section -->
-    <div class="admin-card">
+    <div class="create-card">
       <h3 class="card-title">Create New Deck</h3>
       <form @submit.prevent="handleCreateDeck" class="form">
         <div class="form-group">
@@ -45,7 +45,7 @@
     </div>
 
     <!-- Add Cards Section -->
-    <div class="admin-card">
+    <div class="create-card">
       <h3 class="card-title">Add Cards to Deck</h3>
       
       <!-- Deck Selector -->
@@ -99,7 +99,7 @@
     </div>
 
     <!-- Existing Decks List -->
-    <div class="admin-card">
+    <div class="create-card">
       <h3 class="card-title">Existing Decks</h3>
       <div v-if="decks.length === 0" class="empty-state">
         No decks created yet. Create your first deck above!
@@ -125,7 +125,7 @@
 import api from '../services/api.js';
 
 export default {
-  name: 'AdminPanel',
+  name: 'CreatePanel',
   data() {
     return {
       decks: [],
@@ -232,7 +232,7 @@ export default {
 </script>
 
 <style scoped>
-.admin-panel {
+.create-panel {
   max-width: 48rem;
   margin: 0 auto;
 }
@@ -269,8 +269,8 @@ export default {
   border: 1px solid #ef4444;
 }
 
-/* Admin Cards */
-.admin-card {
+/* Create Cards */
+.create-card {
   background: white;
   border-radius: 0.75rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

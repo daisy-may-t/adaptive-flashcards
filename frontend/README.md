@@ -23,7 +23,7 @@ npm run test       # Run unit tests
 ```
 src/
 ├── components/           # Vue components
-│   ├── AdminPanel.vue   # Create decks and cards
+│   ├── CreatePanel.vue   # Create decks and cards
 │   ├── Flashcard.vue    # Card with flip animation
 │   ├── FullscreenFlashcard.vue  # Immersive study mode
 │   └── ...
