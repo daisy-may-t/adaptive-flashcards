@@ -1,23 +1,81 @@
 # Adaptive Flashcards
 
-A flashcard learning API with confidence tracking and adaptive filtering (learn vs. recap modes).
+A flashcard learning application with confidence tracking and adaptive filtering, featuring a Vue 3 frontend and FastAPI backend.
+
+**Note:** This project was developed with the assistance of AI tools (Claude) to accelerate development.
 
 ## Tech Stack
-- Backend: Python (FastAPI)
-- Database: PostgreSQL (SQLite locally)
-- Frontend: Minimal
-- Tooling: Git, pytest
+- **Backend:** Python 3.13, FastAPI, SQLAlchemy
+- **Database:** SQLite locally (PostgreSQL-compatible schema)
+- **Frontend:** Vue 3, Vite, Axios
+- **Testing:** pytest (backend), Vitest (frontend)
 
 ## Quick Start
+
+### Backend
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
+Backend runs on `http://127.0.0.1:8000`
 
-Visit `http://127.0.0.1:8000/docs` for interactive API documentation.
+**API Documentation:** `http://127.0.0.1:8000/docs`
 
-## Example Usage
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Frontend runs on `http://localhost:5173`
+
+### Run Tests
+```bash
+# Backend
+cd backend
+pytest -v
+
+# Frontend
+cd frontend
+npm run test
+```
+
+## How It Works
+
+**Learn Mode** (`mode=learn`): Shows new cards or cards with confidence < 70%  
+**Recap Mode** (`mode=recap`): Shows cards with confidence ≥ 70%
+
+**Current Confidence Calculation:**
+```python
+# First review
+confidence = user_rating / 10  # 0-10 scale converted to 0-1
+
+# Subsequent reviews (weighted average)
+new_confidence = (0.7 × old_confidence) + (0.3 × new_rating / 10)
+```
+
+## Project Structure
+```
+adaptive-flashcards/
+├── backend/
+│   ├── app/
+│   │   ├── models/      # SQLAlchemy ORM models
+│   │   ├── schemas/     # Pydantic request/response models
+│   │   ├── routers/     # API endpoints
+│   │   ├── config.py    # Configuration constants
+│   │   └── main.py      # FastAPI application
+│   └── tests/           # pytest unit tests
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # Vue components
+│   │   ├── services/    # API service layer
+│   │   └── App.vue      # Root component
+│   └── tests/           # Vitest component tests
+└── README.md
+```
+
+## API Examples
 ```bash
 # Create user
 curl -X POST "http://127.0.0.1:8000/users/" \
@@ -43,43 +101,19 @@ curl -X POST "http://127.0.0.1:8000/reviews" \
   -d '{"user_id": 1, "card_id": 1, "confidence": 0.8}'
 ```
 
-## How It Works
+## Future Enhancements
 
-**Learn Mode** (`mode=learn`): Shows new cards or cards with confidence < 0.7  
-**Recap Mode** (`mode=recap`): Shows cards with confidence ≥ 0.7
-
-Confidence updates use weighted average: `new = 0.7 × old + 0.3 × review`
-
-## Project Structure
-```
-backend/
-├── app/
-│   ├── models/      # SQLAlchemy ORM
-│   ├── schemas/     # Pydantic models
-│   ├── routers/     # API endpoints
-│   ├── config.py    # Constants
-│   └── main.py      # FastAPI app
-└── tests/           # pytest tests
-```
-
-## Run Tests
-```bash
-cd backend
-pytest -v
-```
-
-## Future Ideas
-- Spaced repetition (SM-2 algorithm)
-- AI-generated flashcards
-- Progress analytics
-- Cloud deployment
-
-## Scope
-This project focuses on core backend architecture and API design. Additional concerns such as authentication, advanced scheduling, and deployment are considered out of scope for the initial version.
-
-## Future Improvements
-- Spaced repetition algorithms
-- AI-assisted flashcard generation from user notes or learning materials
-- User authentication
-- Frontend learning interface
-- GCP deployment
+- **Update and Delete** - Ability to edit and delete cards and decks
+- **Spaced Repetition** - Schedule cards based on confidence and time, e.g.,
+  - Low confidence: daily review
+  - Medium confidence: weekly review
+  - High confidence: monthly review
+- **User Authentication** - JWT-based auth with protected endpoints
+- **Progress Analytics** - Charts and statistics
+- **Rich Card Content** - Markdown, images, code blocks
+- **Bulk Card Generation** - Easy way to add many cards at once, e.g.,
+  - Deck Import/Export - Share decks as JSON
+  - AI-Generated Cards - Create flashcards from notes/documents/articles/exam boards
+- **Mobile App** - Native iOS/Android
+- **Collaborative Decks** - Have public and private decks with the ability to share and fork public decks
+- **Offline Support** - Ability to download decks for offline use

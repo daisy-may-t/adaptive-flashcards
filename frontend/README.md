@@ -1,5 +1,44 @@
-# Vue 3 + Vite
+# Frontend
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Modern Vue 3 flashcard interface with adaptive filtering and fullscreen study mode.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Tech Stack
+
+- Vue 3 + Vite
+- Axios for API calls
+- Vitest + Vue Test Utils for testing
+
+## Quick Start
+
+```bash
+npm install
+npm run dev        # Start dev server (localhost:5173)
+npm run test       # Run unit tests
+```
+
+**Note:** Backend must be running on `http://127.0.0.1:8000`
+
+## Project Structure
+
+```
+src/
+├── components/           # Vue components
+│   ├── AdminPanel.vue   # Create decks and cards
+│   ├── Flashcard.vue    # Card with flip animation
+│   ├── FullscreenFlashcard.vue  # Immersive study mode
+│   └── ...
+├── services/
+│   └── api.js          # All backend API calls
+├── App.vue             # Root component with navigation
+└── main.js
+
+tests/
+└── components/         # Component unit tests
+```
+
+## Features
+
+- **Study Mode** - Learn new cards (confidence < 70%) or recap known cards (≥ 70%)
+- **Create Panel** - Create decks and add cards through UI
+- **Fullscreen Mode** - Distraction-free study experience
+- **Confidence Tracking** - 0-10 rating scale with visual tick marks
