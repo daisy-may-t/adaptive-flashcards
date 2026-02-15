@@ -3,13 +3,19 @@
     <h2 class="section-title">Create Panel</h2>
     <p class="section-subtitle">Create and manage flashcard decks</p>
 
-    <!-- Success/Error Messages -->
-    <div v-if="successMessage" class="message success">
-      ✓ {{ successMessage }}
-    </div>
-    <div v-if="errorMessage" class="message error">
-      ⚠ {{ errorMessage }}
-    </div>
+    <!-- Toast Notifications (Fixed Position) -->
+    <transition name="toast">
+      <div v-if="successMessage" class="toast toast-success">
+        <span class="toast-icon">✓</span>
+        <span class="toast-text">{{ successMessage }}</span>
+      </div>
+    </transition>
+    <transition name="toast">
+      <div v-if="errorMessage" class="toast toast-error">
+        <span class="toast-icon">⚠</span>
+        <span class="toast-text">{{ errorMessage }}</span>
+      </div>
+    </transition>
 
     <!-- Create Deck Section -->
     <div class="create-card">
@@ -259,24 +265,57 @@ export default {
   margin-bottom: 2rem;
 }
 
-/* Messages */
-.message {
-  padding: 1rem;
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
   border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
   font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  min-width: 300px;
+  max-width: 400px;
 }
 
-.message.success {
-  background-color: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
+.toast-success {
+  background-color: #10b981;
+  color: white;
 }
 
-.message.error {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #ef4444;
+.toast-error {
+  background-color: #ef4444;
+  color: white;
+}
+
+.toast-icon {
+  font-size: 1.25rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.toast-text {
+  flex: 1;
+}
+
+/* Toast Animation */
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s ease;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 /* Create Cards */
