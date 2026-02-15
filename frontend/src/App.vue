@@ -114,7 +114,11 @@
         </div>
 
         <!-- Create View -->
-        <CreatePanel v-else @deck-created="loadDecks" />
+        <CreatePanel 
+          v-else 
+          @deck-created="loadDecks" 
+          @navigate-to-deck="handleNavigateToDeck"
+        />
       </div>
     </main>
 
@@ -282,6 +286,11 @@ export default {
       } finally {
         this.submitting = false;
       }
+    },
+
+    handleNavigateToDeck(deckId) {
+      this.currentView = 'learn';
+      this.selectedDeckId = deckId;
     },
   },
 };

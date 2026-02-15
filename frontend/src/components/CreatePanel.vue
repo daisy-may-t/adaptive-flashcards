@@ -105,7 +105,12 @@
         No decks created yet. Create your first deck above!
       </div>
       <div v-else class="decks-list">
-        <div v-for="deck in decks" :key="deck.id" class="deck-item">
+        <div 
+          v-for="deck in decks" 
+          :key="deck.id" 
+          class="deck-item"
+          @click="goToDeck(deck.id)"
+        >
           <div class="deck-info">
             <h4 class="deck-name">{{ deck.title }}</h4>
             <p v-if="deck.description" class="deck-description">
@@ -126,6 +131,7 @@ import api from '../services/api.js';
 
 export default {
   name: 'CreatePanel',
+  emits: ['deck-created', 'navigate-to-deck'],
   data() {
     return {
       decks: [],
@@ -226,6 +232,10 @@ export default {
     clearMessages() {
       this.successMessage = '';
       this.errorMessage = '';
+    },
+
+    goToDeck(deckId) {
+      this.$emit('navigate-to-deck', deckId);
     },
   },
 };
@@ -373,12 +383,37 @@ export default {
   background-color: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deck-item:hover {
+  background-color: #f3f4f6;
+  border-color: #4f46e5;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
 }
 
 .deck-info {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  flex: 1;
+}
+
+.deck-arrow {
+  color: #9ca3af;
+  font-size: 1.25rem;
+  transition: all 0.2s;
+  margin-left: 1rem;
+}
+
+.deck-item:hover .deck-arrow {
+  color: #4f46e5;
+  transform: translateX(4px);
 }
 
 .deck-name {
